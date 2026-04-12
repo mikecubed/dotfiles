@@ -1,0 +1,7 @@
+# Neovim generated files
+nvim/data/
+nvim/lazy-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
