@@ -29,6 +29,18 @@ cd ~\projects\dotfiles
 .\install.ps1
 ```
 
+## Syncing on another machine
+
+Already installed? Pull the latest and re-link in one step:
+
+```bash
+# Linux/macOS
+./sync.sh
+
+# Windows (pwsh)
+.\sync.ps1
+```
+
 ## What the install scripts do
 
 1. Create symlinks from your config locations to this repo:
