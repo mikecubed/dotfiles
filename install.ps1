@@ -51,7 +51,7 @@ Link-Config -Source (Join-Path $DotfilesDir "starship\starship.toml") -Destinati
 
 # --- psmux ---
 Write-Host "[psmux]"
-$psmuxDest = Join-Path $env:USERPROFILE ".config\psmux\psmux.conf"
+$psmuxDest = Join-Path $env:USERPROFILE ".psmux.conf"
 Link-Config -Source (Join-Path $DotfilesDir "psmux\psmux.conf") -Destination $psmuxDest
 
 Write-Host ""
