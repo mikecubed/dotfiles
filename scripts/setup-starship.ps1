@@ -83,12 +83,40 @@ switch ($Preset) {
     }
 
     "tokyo-night" {
-        # Replace hardcoded Apple icon with Windows icon
-        # Match the full styled segment by its unique bg/fg colors
-        $icon = ""
-        (Get-Content $StarshipConfig -Raw) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', "[ $icon ](bg:#a3aed2 fg:#090c0c)" |
+        # Replace hardcoded Apple icon segment with $os module
+        (Get-Content $StarshipConfig -Raw) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', '$$os' |
             Set-Content $StarshipConfig -NoNewline
-        Write-Host "Set OS icon to Windows for this platform."
+
+        # Append [os] and [os.symbols] sections
+        $osBlock = @"
+
+[os]
+disabled = false
+style = "bg:#a3aed2 fg:#090c0c"
+
+[os.symbols]
+Windows = ""
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+"@
+        Add-Content -Path $StarshipConfig -Value $osBlock
+        Write-Host "Replaced hardcoded icon with `$os module and platform icons."
     }
 
     "pastel-powerline" {

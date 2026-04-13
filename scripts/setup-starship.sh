@@ -109,9 +109,38 @@ case "$PRESET" in
         ;;
 
     tokyo-night)
-        # Replace hardcoded Apple icon by matching the unique bg/fg color context
-        perl -pi -e "s/\\[.+?\\]\\(bg:#a3aed2 fg:#090c0c\\)/[${ICON} ](bg:#a3aed2 fg:#090c0c)/" "$STARSHIP_CONFIG"
-        echo "Set OS icon to ${ICON} for this platform."
+        # Replace hardcoded Apple icon segment with $os module
+        perl -pi -e 's/\[.+?\]\(bg:#a3aed2 fg:#090c0c\)/\$os/' "$STARSHIP_CONFIG"
+
+        # Append [os] and [os.symbols] sections
+        cat >> "$STARSHIP_CONFIG" <<'TOKYOOS'
+
+[os]
+disabled = false
+style = "bg:#a3aed2 fg:#090c0c"
+
+[os.symbols]
+Windows = ""
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+TOKYOOS
+        echo "Replaced hardcoded icon with \$os module and platform icons."
         ;;
 
     pastel-powerline)
