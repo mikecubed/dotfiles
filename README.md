@@ -48,9 +48,10 @@ Already installed? Pull the latest and re-link in one step:
    - `~/.tmux.conf` -> `dotfiles/tmux/tmux.conf` (Linux/macOS)
    - `~/.config/starship.toml` -> `dotfiles/starship/starship.toml`
    - `~/.config/psmux/psmux.conf` -> `dotfiles/psmux/psmux.conf` (Windows)
-2. Offer to install or update tmux and Neovim to the latest GitHub release
-3. Offer to install starship if it's not found
-4. Existing configs are backed up to `*.bak` before overwriting
+2. Offer to install or update tmux and Neovim to the latest GitHub release (Linux/macOS)
+3. Offer to install or update psmux and Neovim via winget (Windows)
+4. Offer to install starship if it's not found
+5. Existing configs are backed up to `*.bak` before overwriting
 
 ## Installing tools separately
 
@@ -64,7 +65,9 @@ bash scripts/install-neovim.sh
 # Starship
 bash scripts/install-starship.sh
 
-# Windows (pwsh) — starship only
+# Windows (pwsh)
+.\scripts\install-psmux.ps1
+.\scripts\install-neovim.ps1
 .\scripts\install-starship.ps1
 ```
 
