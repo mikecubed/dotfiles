@@ -2,7 +2,19 @@
 
 $ErrorActionPreference = "Stop"
 
+# Force UTF-8 output encoding for correct Nerd Font icon handling
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 $StarshipConfig = Join-Path $env:USERPROFILE ".config\starship.toml"
+
+# Detect PowerShell version for correct UTF-8 encoding parameter
+# PS 7+ supports utf8NoBOM; PS 5 only supports utf8 (with BOM)
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    $Utf8Encoding = "utf8NoBOM"
+} else {
+    $Utf8Encoding = "utf8"
+}
 
 # --- Extract os.symbols from catppuccin-powerline (the source of truth) ---
 function Get-OsSymbols {
@@ -92,15 +104,15 @@ switch ($Preset) {
             "4" { "catppuccin_latte" }
         }
 
-        (Get-Content $StarshipConfig -Raw) -replace "palette = 'catppuccin_mocha'", "palette = '$palette'" |
-            Set-Content $StarshipConfig -NoNewline
+        (Get-Content $StarshipConfig -Raw -Encoding UTF8) -replace "palette = 'catppuccin_mocha'", "palette = '$palette'" |
+            Set-Content $StarshipConfig -NoNewline -Encoding $Utf8Encoding
         Write-Host "Set palette to $palette."
     }
 
     "tokyo-night" {
         # Replace hardcoded Apple icon segment with $os module reference
-        (Get-Content $StarshipConfig -Raw) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', '$$os' |
-            Set-Content $StarshipConfig -NoNewline
+        (Get-Content $StarshipConfig -Raw -Encoding UTF8) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', '$$os' |
+            Set-Content $StarshipConfig -NoNewline -Encoding $Utf8Encoding
 
         # Append [os] with original styling, and [os.symbols] from catppuccin
         $osSymbols = Get-OsSymbols
@@ -112,18 +124,18 @@ format = '[ `$symbol ](bg:#a3aed2 fg:#090c0c)'
 
 $osSymbols
 "@
-        Add-Content -Path $StarshipConfig -Value $osBlock
+        Add-Content -Path $StarshipConfig -Value $osBlock -Encoding $Utf8Encoding
         Write-Host "Replaced hardcoded icon with `$os module and platform icons."
     }
 
     "pastel-powerline" {
         # Enable the [os] module (disabled by default in this preset)
-        (Get-Content $StarshipConfig -Raw) -replace '(?m)(^\[os\]\s*\n.*?)disabled = true', '$1disabled = false' |
-            Set-Content $StarshipConfig -NoNewline
+        (Get-Content $StarshipConfig -Raw -Encoding UTF8) -replace '(?m)(^\[os\]\s*\n.*?)disabled = true', '$1disabled = false' |
+            Set-Content $StarshipConfig -NoNewline -Encoding $Utf8Encoding
 
         # Append os.symbols from catppuccin preset
         $osSymbols = Get-OsSymbols
-        Add-Content -Path $StarshipConfig -Value "`n$osSymbols"
+        Add-Content -Path $StarshipConfig -Value "`n$osSymbols" -Encoding $Utf8Encoding
         Write-Host "Enabled OS detection with platform icons."
     }
 }
