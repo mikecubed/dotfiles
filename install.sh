@@ -48,6 +48,34 @@ echo ""
 echo "Symlinks created."
 echo ""
 
+# --- Optional: install/update tmux ---
+if ! command -v tmux &>/dev/null; then
+    read -rp "tmux is not installed. Install latest version? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/install-tmux.sh"
+    fi
+else
+    echo "tmux is installed: $(tmux -V)"
+    read -rp "Check for tmux updates? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/install-tmux.sh"
+    fi
+fi
+
+# --- Optional: install/update neovim ---
+if ! command -v nvim &>/dev/null; then
+    read -rp "Neovim is not installed. Install latest version? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/install-neovim.sh"
+    fi
+else
+    echo "Neovim is installed: $(nvim --version | head -1)"
+    read -rp "Check for Neovim updates? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/install-neovim.sh"
+    fi
+fi
+
 # --- Optional: install starship if not present ---
 if ! command -v starship &>/dev/null; then
     read -rp "starship is not installed. Install it now? [y/N] " answer
