@@ -48,20 +48,27 @@ Already installed? Pull the latest and re-link in one step:
    - `~/.tmux.conf` -> `dotfiles/tmux/tmux.conf` (Linux/macOS)
    - `~/.config/starship.toml` -> `dotfiles/starship/starship.toml`
    - `~/.config/psmux/psmux.conf` -> `dotfiles/psmux/psmux.conf` (Windows)
-2. Offer to install starship if it's not found
-3. Existing configs are backed up to `*.bak` before overwriting
+2. Offer to install or update tmux and Neovim to the latest GitHub release
+3. Offer to install starship if it's not found
+4. Existing configs are backed up to `*.bak` before overwriting
 
-## Installing starship separately
+## Installing tools separately
 
 ```bash
-# Linux/macOS
+# tmux (builds from source on Linux, brew on macOS)
+bash scripts/install-tmux.sh
+
+# Neovim (AppImage on Linux, brew on macOS)
+bash scripts/install-neovim.sh
+
+# Starship
 bash scripts/install-starship.sh
 
-# Windows (pwsh)
+# Windows (pwsh) — starship only
 .\scripts\install-starship.ps1
 ```
 
-Both scripts install starship and add the init line to your shell profile (`.bashrc` or pwsh `$PROFILE`).
+Each script checks the latest GitHub release and skips if already up to date. The starship scripts also add the init line to your shell profile (`.bashrc` or pwsh `$PROFILE`).
 
 ## Theme
 
