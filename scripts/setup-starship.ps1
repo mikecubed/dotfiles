@@ -4,6 +4,21 @@ $ErrorActionPreference = "Stop"
 
 $StarshipConfig = Join-Path $env:USERPROFILE ".config\starship.toml"
 
+# --- Extract os.symbols from catppuccin-powerline (the source of truth) ---
+function Get-OsSymbols {
+    $output = starship preset catppuccin-powerline
+    $inBlock = $false
+    $lines = @()
+    foreach ($line in $output) {
+        if ($line -match '^\[os\.symbols\]') { $inBlock = $true }
+        if ($inBlock) {
+            if ($line -eq '' -and $lines.Count -gt 1) { break }
+            $lines += $line
+        }
+    }
+    return $lines -join "`n"
+}
+
 # --- Preset list ---
 $Presets = @(
     "bracketed-segments"
@@ -87,124 +102,28 @@ switch ($Preset) {
         (Get-Content $StarshipConfig -Raw) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', '$$os' |
             Set-Content $StarshipConfig -NoNewline
 
-        # Append [os] and [os.symbols] sections
+        # Append [os] with original styling, and [os.symbols] from catppuccin
+        $osSymbols = Get-OsSymbols
         $osBlock = @"
 
 [os]
 disabled = false
 format = '[ `$symbol ](bg:#a3aed2 fg:#090c0c)'
 
-[os.symbols]
-Alpaquita = "🔔"
-Alpine = ""
-AlmaLinux = "💠"
-Amazon = ""
-Android = ""
-AOSC = "💠"
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-DragonFly = "🐉"
-Emscripten = "🔗"
-EndeavourOS = "🚀"
-Fedora = "󰣛"
-FreeBSD = ""
-Garuda = "🦅"
-Gentoo = "󰣨"
-HardenedBSD = "🛡️"
-Illumos = "🐦"
-Kali = "🐉"
-Linux = "󰌽"
-Mabox = "📦"
-Macos = "󰀵"
-Manjaro = ""
-Mariner = "🌊"
-MidnightBSD = "🌘"
-Mint = "󰣭"
-NetBSD = "🚩"
-NixOS = "❄️"
-OpenBSD = "🐡"
-OpenCloudOS = "☁️"
-openEuler = "🦉"
-openSUSE = ""
-OracleLinux = "🦴"
-Pop = ""
-Raspbian = "󰐿"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
-RockyLinux = "💠"
-Redox = "🧪"
-Solus = "⛵"
-SUSE = ""
-Ubuntu = "󰕈"
-Ultramarine = "🔷"
-Unknown = "❓"
-Void = ""
-Windows = ""
+$osSymbols
 "@
         Add-Content -Path $StarshipConfig -Value $osBlock
         Write-Host "Replaced hardcoded icon with `$os module and platform icons."
     }
 
     "pastel-powerline" {
-        # Enable the [os] module
+        # Enable the [os] module (disabled by default in this preset)
         (Get-Content $StarshipConfig -Raw) -replace '(?m)(^\[os\]\s*\n.*?)disabled = true', '$1disabled = false' |
             Set-Content $StarshipConfig -NoNewline
 
-        # Append os.symbols block
-        $symbols = @"
-
-[os.symbols]
-Alpaquita = "🔔"
-Alpine = ""
-AlmaLinux = "💠"
-Amazon = ""
-Android = ""
-AOSC = "💠"
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-DragonFly = "🐉"
-Emscripten = "🔗"
-EndeavourOS = "🚀"
-Fedora = "󰣛"
-FreeBSD = ""
-Garuda = "🦅"
-Gentoo = "󰣨"
-HardenedBSD = "🛡️"
-Illumos = "🐦"
-Kali = "🐉"
-Linux = "󰌽"
-Mabox = "📦"
-Macos = "󰀵"
-Manjaro = ""
-Mariner = "🌊"
-MidnightBSD = "🌘"
-Mint = "󰣭"
-NetBSD = "🚩"
-NixOS = "❄️"
-OpenBSD = "🐡"
-OpenCloudOS = "☁️"
-openEuler = "🦉"
-openSUSE = ""
-OracleLinux = "🦴"
-Pop = ""
-Raspbian = "󰐿"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
-RockyLinux = "💠"
-Redox = "🧪"
-Solus = "⛵"
-SUSE = ""
-Ubuntu = "󰕈"
-Ultramarine = "🔷"
-Unknown = "❓"
-Void = ""
-Windows = ""
-"@
-        Add-Content -Path $StarshipConfig -Value $symbols
+        # Append os.symbols from catppuccin preset
+        $osSymbols = Get-OsSymbols
+        Add-Content -Path $StarshipConfig -Value "`n$osSymbols"
         Write-Host "Enabled OS detection with platform icons."
     }
 }

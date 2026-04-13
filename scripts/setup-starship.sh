@@ -4,35 +4,9 @@ set -euo pipefail
 
 STARSHIP_CONFIG="${HOME}/.config/starship.toml"
 
-# --- Platform icon detection ---
-detect_platform_icon() {
-    local os
-    os="$(uname -s)"
-    if [[ "$os" == "Darwin" ]]; then
-        echo "󰀵"
-        return
-    fi
-    if [[ -f /etc/os-release ]]; then
-        local id
-        id="$(. /etc/os-release && echo "${ID:-linux}")"
-        case "$id" in
-            ubuntu)       echo "󰕈" ;;
-            debian)       echo "󰣚" ;;
-            fedora)       echo "󰣛" ;;
-            arch|artix)   echo "󰣇" ;;
-            manjaro)      echo "" ;;
-            centos)       echo "" ;;
-            rhel|redhat)  echo "󱄛" ;;
-            suse|opensuse*) echo "" ;;
-            alpine)       echo "" ;;
-            gentoo)       echo "󰣨" ;;
-            mint)         echo "󰣭" ;;
-            raspbian)     echo "󰐿" ;;
-            *)            echo "󰌽" ;;
-        esac
-    else
-        echo "󰌽"
-    fi
+# --- Extract os.symbols from catppuccin-powerline (the source of truth) ---
+get_os_symbols() {
+    starship preset catppuccin-powerline | sed -n '/^\[os.symbols\]/,/^$/p'
 }
 
 # --- Preset list ---
@@ -82,8 +56,6 @@ starship preset "$PRESET" -o "$STARSHIP_CONFIG"
 
 # --- Post-processing ---
 
-ICON="$(detect_platform_icon)"
-
 case "$PRESET" in
     catppuccin-powerline)
         echo ""
@@ -112,62 +84,15 @@ case "$PRESET" in
         # Replace hardcoded Apple icon segment with $os module reference
         perl -pi -e 's/\[.+?\]\(bg:#a3aed2 fg:#090c0c\)/\$os/' "$STARSHIP_CONFIG"
 
-        # Append [os] and [os.symbols] sections
-        cat >> "$STARSHIP_CONFIG" <<'TOKYOOS'
-
-[os]
-disabled = false
-format = '[ $symbol ](bg:#a3aed2 fg:#090c0c)'
-
-[os.symbols]
-Alpaquita = "🔔"
-Alpine = ""
-AlmaLinux = "💠"
-Amazon = ""
-Android = ""
-AOSC = "💠"
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-DragonFly = "🐉"
-Emscripten = "🔗"
-EndeavourOS = "🚀"
-Fedora = "󰣛"
-FreeBSD = ""
-Garuda = "🦅"
-Gentoo = "󰣨"
-HardenedBSD = "🛡️"
-Illumos = "🐦"
-Kali = "🐉"
-Linux = "󰌽"
-Mabox = "📦"
-Macos = "󰀵"
-Manjaro = ""
-Mariner = "🌊"
-MidnightBSD = "🌘"
-Mint = "󰣭"
-NetBSD = "🚩"
-NixOS = "❄️"
-OpenBSD = "🐡"
-OpenCloudOS = "☁️"
-openEuler = "🦉"
-openSUSE = ""
-OracleLinux = "🦴"
-Pop = ""
-Raspbian = "󰐿"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
-RockyLinux = "💠"
-Redox = "🧪"
-Solus = "⛵"
-SUSE = ""
-Ubuntu = "󰕈"
-Ultramarine = "🔷"
-Unknown = "❓"
-Void = ""
-Windows = ""
-TOKYOOS
+        # Append [os] with the original styling, and [os.symbols] from catppuccin
+        {
+            echo ""
+            echo "[os]"
+            echo "disabled = false"
+            echo "format = '[ \$symbol ](bg:#a3aed2 fg:#090c0c)'"
+            echo ""
+            get_os_symbols
+        } >> "$STARSHIP_CONFIG"
         echo "Replaced hardcoded icon with \$os module and platform icons."
         ;;
 
@@ -175,58 +100,11 @@ TOKYOOS
         # Enable the [os] module (disabled by default in this preset)
         sed -i '/^\[os\]$/,/^disabled/ s/disabled = true/disabled = false/' "$STARSHIP_CONFIG"
 
-        # Append os.symbols block for platform awareness
-        cat >> "$STARSHIP_CONFIG" <<'SYMBOLS'
-
-[os.symbols]
-Alpaquita = "🔔"
-Alpine = ""
-AlmaLinux = "💠"
-Amazon = ""
-Android = ""
-AOSC = "💠"
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-DragonFly = "🐉"
-Emscripten = "🔗"
-EndeavourOS = "🚀"
-Fedora = "󰣛"
-FreeBSD = ""
-Garuda = "🦅"
-Gentoo = "󰣨"
-HardenedBSD = "🛡️"
-Illumos = "🐦"
-Kali = "🐉"
-Linux = "󰌽"
-Mabox = "📦"
-Macos = "󰀵"
-Manjaro = ""
-Mariner = "🌊"
-MidnightBSD = "🌘"
-Mint = "󰣭"
-NetBSD = "🚩"
-NixOS = "❄️"
-OpenBSD = "🐡"
-OpenCloudOS = "☁️"
-openEuler = "🦉"
-openSUSE = ""
-OracleLinux = "🦴"
-Pop = ""
-Raspbian = "󰐿"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
-RockyLinux = "💠"
-Redox = "🧪"
-Solus = "⛵"
-SUSE = ""
-Ubuntu = "󰕈"
-Ultramarine = "🔷"
-Unknown = "❓"
-Void = ""
-Windows = ""
-SYMBOLS
+        # Append os.symbols from catppuccin preset
+        {
+            echo ""
+            get_os_symbols
+        } >> "$STARSHIP_CONFIG"
         echo "Enabled OS detection with platform icons."
         ;;
 esac
