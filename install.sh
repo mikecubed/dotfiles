@@ -40,10 +40,6 @@ link_config "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
 echo "[tmux]"
 link_config "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 
-# --- Starship ---
-echo "[starship]"
-link_config "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
-
 echo ""
 echo "Symlinks created."
 echo ""
@@ -84,6 +80,25 @@ if ! command -v starship &>/dev/null; then
     fi
 else
     echo "starship is already installed."
+fi
+
+# --- Starship preset selection ---
+if command -v starship &>/dev/null; then
+    echo ""
+    read -rp "Configure starship preset? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/setup-starship.sh"
+    fi
+fi
+
+# --- Optional: install ble.sh (Bash Line Editor) ---
+if [[ -f "${HOME}/.local/share/blesh/ble.sh" ]]; then
+    echo "ble.sh is already installed."
+else
+    read -rp "ble.sh (Bash Line Editor) is not installed. Install it? [y/N] " answer
+    if [[ "${answer,,}" == "y" ]]; then
+        bash "$DOTFILES_DIR/scripts/install-blesh.sh"
+    fi
 fi
 
 echo ""

@@ -44,11 +44,6 @@ Write-Host "[nvim]"
 $nvimDest = Join-Path $env:LOCALAPPDATA "nvim"
 Link-Config -Source (Join-Path $DotfilesDir "nvim") -Destination $nvimDest
 
-# --- Starship ---
-Write-Host "[starship]"
-$starshipDest = Join-Path $env:USERPROFILE ".config\starship.toml"
-Link-Config -Source (Join-Path $DotfilesDir "starship\starship.toml") -Destination $starshipDest
-
 # --- psmux ---
 Write-Host "[psmux]"
 $psmuxDest = Join-Path $env:USERPROFILE ".psmux.conf"
@@ -94,6 +89,15 @@ if (-not (Get-Command starship -ErrorAction SilentlyContinue)) {
     }
 } else {
     Write-Host "starship is already installed."
+}
+
+# --- Starship preset selection ---
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Write-Host ""
+    $answer = Read-Host "Configure starship preset? [y/N]"
+    if ($answer -eq "y") {
+        & (Join-Path $DotfilesDir "scripts\setup-starship.ps1")
+    }
 }
 
 Write-Host ""

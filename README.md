@@ -8,7 +8,7 @@ Personal development environment configs. One repo, deployable to Linux/macOS (b
 |--------|-------------|-----------|
 | `nvim/` | Neovim with LazyVim | Linux, macOS, Windows |
 | `tmux/` | tmux with Catppuccin Mocha theme | Linux, macOS |
-| `starship/` | Starship prompt with Catppuccin Mocha palette | All |
+| `starship/` | Starship prompt (choose from 12 presets during install) | All |
 | `psmux/` | psmux (PowerShell multiplexer) | Windows |
 
 ## Quick start
@@ -46,12 +46,13 @@ Already installed? Pull the latest and re-link in one step:
 1. Create symlinks from your config locations to this repo:
    - `~/.config/nvim` -> `dotfiles/nvim/`
    - `~/.tmux.conf` -> `dotfiles/tmux/tmux.conf` (Linux/macOS)
-   - `~/.config/starship.toml` -> `dotfiles/starship/starship.toml`
-   - `~/.config/psmux/psmux.conf` -> `dotfiles/psmux/psmux.conf` (Windows)
+   - `~/.psmux.conf` -> `dotfiles/psmux/psmux.conf` (Windows)
 2. Offer to install or update tmux and Neovim to the latest GitHub release (Linux/macOS)
 3. Offer to install or update psmux and Neovim via winget (Windows)
 4. Offer to install starship if it's not found
-5. Existing configs are backed up to `*.bak` before overwriting
+5. Configure starship with your choice of preset (with platform-aware icon customization)
+6. Offer to install ble.sh (Bash Line Editor) for syntax highlighting and autosuggestions (Linux/macOS)
+7. Existing configs are backed up to `*.bak` before overwriting
 
 ## Installing tools separately
 
@@ -65,17 +66,24 @@ bash scripts/install-neovim.sh
 # Starship
 bash scripts/install-starship.sh
 
+# Starship preset selector (interactive)
+bash scripts/setup-starship.sh
+
+# ble.sh (Bash Line Editor)
+bash scripts/install-blesh.sh
+
 # Windows (pwsh)
 .\scripts\install-psmux.ps1
 .\scripts\install-neovim.ps1
 .\scripts\install-starship.ps1
+.\scripts\setup-starship.ps1
 ```
 
 Each script checks the latest GitHub release and skips if already up to date. The starship scripts also add the init line to your shell profile (`.bashrc` or pwsh `$PROFILE`).
 
 ## Theme
 
-Everything uses **Catppuccin Mocha**: tmux status bar, starship prompt, and Neovim (via LazyVim's default tokyonight, or switch to catppuccin in your nvim config).
+The tmux status bar uses **Catppuccin Mocha**. Starship prompt theme is configurable during install -- choose from 12 presets including catppuccin-powerline (with 4 palette variants), tokyo-night, gruvbox-rainbow, and more. Neovim uses LazyVim's default tokyonight.
 
 ## See also
 
