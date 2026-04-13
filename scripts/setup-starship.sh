@@ -109,8 +109,8 @@ case "$PRESET" in
         ;;
 
     tokyo-night)
-        # Replace hardcoded Apple icon in the format string
-        perl -pi -e "s/\\[  \\]/[${ICON} ]/" "$STARSHIP_CONFIG"
+        # Replace hardcoded Apple icon by matching the unique bg/fg color context
+        perl -pi -e "s/\\[.+?\\]\\(bg:#a3aed2 fg:#090c0c\\)/[${ICON} ](bg:#a3aed2 fg:#090c0c)/" "$STARSHIP_CONFIG"
         echo "Set OS icon to ${ICON} for this platform."
         ;;
 

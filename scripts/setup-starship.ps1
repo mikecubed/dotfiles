@@ -84,8 +84,9 @@ switch ($Preset) {
 
     "tokyo-night" {
         # Replace hardcoded Apple icon with Windows icon
+        # Match the full styled segment by its unique bg/fg colors
         $icon = ""
-        (Get-Content $StarshipConfig -Raw) -replace '\[  \]', "[$icon ]" |
+        (Get-Content $StarshipConfig -Raw) -replace '\[.+?\]\(bg:#a3aed2 fg:#090c0c\)', "[ $icon ](bg:#a3aed2 fg:#090c0c)" |
             Set-Content $StarshipConfig -NoNewline
         Write-Host "Set OS icon to Windows for this platform."
     }
